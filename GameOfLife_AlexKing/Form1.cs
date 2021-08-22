@@ -282,9 +282,30 @@ namespace GameOfLife_AlexKing
             return count;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        //Background Color Change
+        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ColorDialog cd = new ColorDialog();
 
+            cd.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == cd.ShowDialog())
+            {
+                graphicsPanel1.BackColor = cd.Color;
+            }
+        }
+
+        private void textColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+
+            cd.Color = gridColor;
+
+            if (DialogResult.OK == cd.ShowDialog())
+            {
+                gridColor = cd.Color;
+            }
+            graphicsPanel1.Invalidate();
         }
     }
 }
