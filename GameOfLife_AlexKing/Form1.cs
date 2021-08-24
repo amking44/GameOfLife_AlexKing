@@ -27,7 +27,7 @@ namespace GameOfLife_AlexKing
 
         // Drawing colors
         Color gridColor = Color.Black;
-        Color cellColor = Color.DarkGray;
+        Color cellColor = Color.LightGray;
 
         // The Timer class
         Timer timer = new Timer();
@@ -141,7 +141,7 @@ namespace GameOfLife_AlexKing
 
                     if (universe[x, y].liveNeighborCount > 0)
                     {
-                        Debug.WriteLine(universe[x, y].liveNeighborCount);
+                        //Debug.WriteLine(universe[x, y].liveNeighborCount);    //to make sure neighborCount is being counted properly
                         e.Graphics.DrawString(universe[x, y].liveNeighborCount.ToString(), font, numberBrush, cellRect, strFormat);
                     }
                 }
@@ -282,8 +282,7 @@ namespace GameOfLife_AlexKing
             return count;
         }
 
-        //Background Color Change
-        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ColorDialog cd = new ColorDialog();
 
@@ -295,7 +294,7 @@ namespace GameOfLife_AlexKing
             }
         }
 
-        private void textColorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void gridColorToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ColorDialog cd = new ColorDialog();
 
@@ -304,6 +303,19 @@ namespace GameOfLife_AlexKing
             if (DialogResult.OK == cd.ShowDialog())
             {
                 gridColor = cd.Color;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+
+            cd.Color = cellColor;
+
+            if (DialogResult.OK == cd.ShowDialog())
+            {
+                cellColor = cd.Color;
             }
             graphicsPanel1.Invalidate();
         }
