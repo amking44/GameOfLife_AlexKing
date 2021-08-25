@@ -410,8 +410,40 @@ namespace GameOfLife_AlexKing
             randomUniverse();
         }
 
-        //++++++++++++++++++++++++++COLOR CHANGE FUNCTIONS++++++++++++++++++++++++++
+        //++++++++++++++++++++++++++COLOR BUTTON FUNCTIONS++++++++++++++++++++++++++
         private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BackgroundColor();
+        }
+
+        private void cellColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            CellColor();
+        }
+
+        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GridColor();
+        }
+
+        //Context Menu Selections
+        private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            BackgroundColor();
+        }
+
+        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CellColor();
+        }
+
+        private void gridColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            GridColor();
+        }
+
+        //Color Functions
+        private void BackgroundColor()
         {
             ColorDialog cd = new ColorDialog();
 
@@ -423,7 +455,7 @@ namespace GameOfLife_AlexKing
             }
         }
 
-        private void cellColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void CellColor()
         {
             ColorDialog cd = new ColorDialog();
 
@@ -437,7 +469,7 @@ namespace GameOfLife_AlexKing
             graphicsPanel1.Invalidate();
         }
 
-        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void GridColor()
         {
             ColorDialog cd = new ColorDialog();
 
