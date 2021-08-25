@@ -59,9 +59,9 @@ namespace GameOfLife_AlexKing
             this.toolStripStatusLabelcellsAlive = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelTorodial = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelSeed = new System.Windows.Forms.ToolStripStatusLabel();
-            this.graphicsPanel1 = new GameOfLife_AlexKing.GraphicsPanel();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.byCurrentSeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.graphicsPanel1 = new GameOfLife_AlexKing.GraphicsPanel();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -85,9 +85,8 @@ namespace GameOfLife_AlexKing
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
-            this.importToolStripMenuItem,
             this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
+            this.importToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -110,7 +109,8 @@ namespace GameOfLife_AlexKing
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveToolStripMenuItem.Text = "&Save";
+            this.saveToolStripMenuItem.Text = "&Save As";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -124,6 +124,7 @@ namespace GameOfLife_AlexKing
             // 
             this.randomizeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.bySeedToolStripMenuItem,
+            this.byCurrentSeedToolStripMenuItem,
             this.byTimeToolStripMenuItem});
             this.randomizeToolStripMenuItem.Name = "randomizeToolStripMenuItem";
             this.randomizeToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
@@ -132,14 +133,14 @@ namespace GameOfLife_AlexKing
             // bySeedToolStripMenuItem
             // 
             this.bySeedToolStripMenuItem.Name = "bySeedToolStripMenuItem";
-            this.bySeedToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.bySeedToolStripMenuItem.Text = "By Seed";
+            this.bySeedToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.bySeedToolStripMenuItem.Text = "By New Seed";
             this.bySeedToolStripMenuItem.Click += new System.EventHandler(this.bySeedToolStripMenuItem_Click);
             // 
             // byTimeToolStripMenuItem
             // 
             this.byTimeToolStripMenuItem.Name = "byTimeToolStripMenuItem";
-            this.byTimeToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.byTimeToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.byTimeToolStripMenuItem.Text = "By Time";
             this.byTimeToolStripMenuItem.Click += new System.EventHandler(this.byTimeToolStripMenuItem_Click);
             // 
@@ -328,6 +329,19 @@ namespace GameOfLife_AlexKing
             this.toolStripStatusLabelSeed.Name = "toolStripStatusLabelSeed";
             this.toolStripStatusLabelSeed.Size = new System.Drawing.Size(0, 17);
             // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem.Text = "Import";
+            // 
+            // byCurrentSeedToolStripMenuItem
+            // 
+            this.byCurrentSeedToolStripMenuItem.Name = "byCurrentSeedToolStripMenuItem";
+            this.byCurrentSeedToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.byCurrentSeedToolStripMenuItem.Text = "By Current Seed";
+            this.byCurrentSeedToolStripMenuItem.Click += new System.EventHandler(this.byCurrentSeedToolStripMenuItem_Click);
+            // 
             // graphicsPanel1
             // 
             this.graphicsPanel1.BackColor = System.Drawing.SystemColors.Window;
@@ -338,19 +352,6 @@ namespace GameOfLife_AlexKing
             this.graphicsPanel1.TabIndex = 3;
             this.graphicsPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel1_Paint);
             this.graphicsPanel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel1_MouseClick);
-            // 
-            // importToolStripMenuItem
-            // 
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.importToolStripMenuItem.Text = "Import";
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // GOL
             // 
@@ -408,7 +409,7 @@ namespace GameOfLife_AlexKing
         private System.Windows.Forms.ToolStripMenuItem hUDToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSeed;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem byCurrentSeedToolStripMenuItem;
     }
 }
 

@@ -398,6 +398,11 @@ namespace GameOfLife_AlexKing
                 randomUniverse();
             }
         }
+        private void byCurrentSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rand = new Random(seed);
+            randomUniverse();
+        }
 
         private void byTimeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -465,6 +470,7 @@ namespace GameOfLife_AlexKing
             graphicsPanel1.Invalidate();
         }
 
+        //++++++++++++++++++++++++++OPEN/SAVE FUNCTIONS++++++++++++++++++++++++++
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
@@ -551,7 +557,7 @@ namespace GameOfLife_AlexKing
             }
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.Filter = "All Files|*.*|Cells|*.cells";
@@ -576,7 +582,7 @@ namespace GameOfLife_AlexKing
 
                     // Iterate through the current row one cell at a time.
                     for (int x = 0; x < universe.GetLength(0); x++)
-                     {
+                    {
                         // If the universe[x,y] is alive then append 'O' (capital O)
                         // to the row string.
                         // Else if the universe[x,y] is dead then append '.' (period)
