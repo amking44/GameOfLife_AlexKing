@@ -16,7 +16,7 @@ namespace GameOfLife_AlexKing
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new GOL());
+            Application.Run(new GOLForm());
         }
     }
 }

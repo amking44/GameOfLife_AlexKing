@@ -14,7 +14,7 @@ namespace GameOfLife_AlexKing
 {
 
 
-    public partial class GOL : Form
+    public partial class GOLForm : Form
     {
         struct cell
         {
@@ -23,20 +23,20 @@ namespace GameOfLife_AlexKing
         }
 
         //Various settings
+        int seed, univX, univY, timeInt;
         Random rand = new Random();
-        int seed = 44;
         bool toroidalUniverse = true;
         bool gridOn = true;
         bool HUDon = true;
         bool neighborCountOn = true;
+        bool tenGridOn = true;
 
         // The universe array
-        cell[,] universe = new cell[30, 30];
-        cell[,] scratchPad = new cell[30, 30];
+        cell[,] universe;
+        cell[,] scratchPad;
 
         // Drawing colors
-        Color gridColor = Color.Black;
-        Color cellColor = Color.DarkGray;
+        Color gridColor, cellColor, backgroundColor, tenGridColor;
 
         // The Timer class
         Timer timer = new Timer();
@@ -45,12 +45,23 @@ namespace GameOfLife_AlexKing
         ushort generations = 0;
         ushort cellsAlive = 0;
 
-        public GOL()
+        public GOLForm()
         {
             InitializeComponent();
 
+            timeInt = Properties.Settings.Default.timerInterval;
+            seed = Properties.Settings.Default.seed;
+            tenGridColor = Properties.Settings.Default.tenGridColor;
+            gridColor = Properties.Settings.Default.gridColor;
+            cellColor = Properties.Settings.Default.cellColor;
+            backgroundColor = Properties.Settings.Default.backgroundColor;
+            univX = Properties.Settings.Default.universeX;
+            univY = Properties.Settings.Default.universeY;
+            universe = new cell[univX, univY];
+            scratchPad = new cell[univX, univY];
+            graphicsPanel1.BackColor = backgroundColor;
             // Setup the timer
-            timer.Interval = 100; // milliseconds
+            timer.Interval = timeInt; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
@@ -78,6 +89,7 @@ namespace GameOfLife_AlexKing
                 }
             }
 
+            //Setting universe to updated universe(scratchPad)
             universe = scratchPad;
 
             // Increment generation count
@@ -105,10 +117,12 @@ namespace GameOfLife_AlexKing
 
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
+            Pen tenGridPen = new Pen(tenGridColor, 2);
 
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
             Brush numberBrush = new SolidBrush(Color.Black);
+            Brush textBrush = new SolidBrush(Color.FromArgb(128, Color.Red));
 
 
             //Font format for neighborCount
@@ -179,18 +193,29 @@ namespace GameOfLife_AlexKing
             }
 
             //x10 line drawings
-            if (gridOn == true)
+            if (tenGridOn == true)
             {
                 for (int i = 1; i < universe.GetLength(0); i++)
                 {
                     if (i % 10 == 0)
                     {
-                        gridPen.Width = 2;
-                        e.Graphics.DrawLine(gridPen, i * cellWidth, 0, i * cellWidth, graphicsPanel1.ClientSize.Height);
-                        e.Graphics.DrawLine(gridPen, 0, i * cellHeight, graphicsPanel1.ClientSize.Width, i * cellHeight);
+                        e.Graphics.DrawLine(tenGridPen, i * cellWidth, 0, i * cellWidth, graphicsPanel1.ClientSize.Height);
+                        e.Graphics.DrawLine(tenGridPen, 0, i * cellHeight, graphicsPanel1.ClientSize.Width, i * cellHeight);
                     }
                 }
-                gridPen.Width = 1;
+            }
+
+            //HUD drawing
+            if (HUDon == true)
+            {
+                Font hudFont = new Font("Courier", 20);
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Near;
+                stringFormat.LineAlignment = StringAlignment.Far;
+
+                string hud = "Generation = " + generations + "\nInterval = " + timeInt + " ms/generation\nCells Alive = " + cellsAlive + "\nToroidal universe = " + toroidalUniverse.ToString() + "\nUniverse Size = [" + univX + ", " + univY + "]"; 
+
+                e.Graphics.DrawString(hud, hudFont, textBrush, graphicsPanel1.ClientRectangle, stringFormat);
             }
 
             //toolStrip labels
@@ -200,8 +225,10 @@ namespace GameOfLife_AlexKing
 
             // Cleaning up pens and brushes
             gridPen.Dispose();
+            tenGridPen.Dispose();
             cellBrush.Dispose();
             numberBrush.Dispose();
+            textBrush.Dispose();
         }
 
         private void graphicsPanel1_MouseClick(object sender, MouseEventArgs e)
@@ -345,7 +372,13 @@ namespace GameOfLife_AlexKing
         }
         private void doubleSpeedButton_Click(object sender, EventArgs e)
         {
-            timer.Interval *= 2;
+            if (timeInt <= 1)
+            {
+                return;
+            }
+            timeInt /= 2;
+            timer.Interval = timeInt;
+            graphicsPanel1.Invalidate();
         }
 
         //++++++++++++++++++++++++++VIEW FUNCTIONS++++++++++++++++++++++++++
@@ -367,6 +400,12 @@ namespace GameOfLife_AlexKing
         {
             hUDToolStripMenuItem.Checked = !hUDToolStripMenuItem.Checked;
             HUDon = hUDToolStripMenuItem.Checked;
+            graphicsPanel1.Invalidate();
+        }
+        private void tenGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tenGridToolStripMenuItem.Checked = !tenGridToolStripMenuItem.Checked;
+            tenGridOn = tenGridToolStripMenuItem.Checked;
             graphicsPanel1.Invalidate();
         }
 
@@ -406,22 +445,23 @@ namespace GameOfLife_AlexKing
 
         private void byTimeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            rand = new Random();
+            seed = Environment.TickCount;
+            rand = new Random(seed);
             randomUniverse();
         }
 
-        //++++++++++++++++++++++++++COLOR BUTTON FUNCTIONS++++++++++++++++++++++++++
-        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        //++++++++++++++++++++++++++SETTINGS FUNCTIONS++++++++++++++++++++++++++
+        private void backgroundColorToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             BackgroundColor();
         }
 
-        private void cellColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void cellColorToolStripMenuItem1_Click_1(object sender, EventArgs e)
         {
             CellColor();
         }
 
-        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void gridColorToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             GridColor();
         }
@@ -451,7 +491,8 @@ namespace GameOfLife_AlexKing
 
             if (DialogResult.OK == cd.ShowDialog())
             {
-                graphicsPanel1.BackColor = cd.Color;
+                backgroundColor = cd.Color;
+                graphicsPanel1.BackColor = backgroundColor;
             }
         }
 
@@ -482,21 +523,71 @@ namespace GameOfLife_AlexKing
             graphicsPanel1.Invalidate();
         }
 
+        private void tenGridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+
+            cd.Color = tenGridColor;
+
+            if (DialogResult.OK == cd.ShowDialog())
+            {
+                tenGridColor = cd.Color;
+            }
+            graphicsPanel1.Invalidate();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+            seed = Properties.Settings.Default.seed;
+            gridColor = Properties.Settings.Default.gridColor;
+            tenGridColor = Properties.Settings.Default.tenGridColor;
+            cellColor = Properties.Settings.Default.cellColor;
+            backgroundColor = Properties.Settings.Default.backgroundColor;
+            univX = Properties.Settings.Default.universeX;
+            univY = Properties.Settings.Default.universeY;
+            universe = new cell[univX, univY];
+            scratchPad = new cell[univX, univY];
+            graphicsPanel1.BackColor = backgroundColor;
+            timeInt = Properties.Settings.Default.timerInterval; // milliseconds
+            graphicsPanel1.Invalidate();
+        }
+
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reload();
+            seed = Properties.Settings.Default.seed;
+            gridColor = Properties.Settings.Default.gridColor;
+            tenGridColor = Properties.Settings.Default.tenGridColor;
+            cellColor = Properties.Settings.Default.cellColor;
+            backgroundColor = Properties.Settings.Default.backgroundColor;
+            univX = Properties.Settings.Default.universeX;
+            univY = Properties.Settings.Default.universeY;
+            universe = new cell[univX, univY];
+            scratchPad = new cell[univX, univY];
+            graphicsPanel1.BackColor = backgroundColor;
+            timeInt = Properties.Settings.Default.timerInterval; // milliseconds
+            graphicsPanel1.Invalidate();
+        }
+
         //Options menu
-        private void optionsToolStripMenuItem2_Click(object sender, EventArgs e)
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int xAxis = universe.GetLength(0);
             int yAxis = universe.GetLength(1);
-            OptionsDialog od = new OptionsDialog(toroidalUniverse, timer.Interval, universe.GetLength(0), universe.GetLength(1));
+            OptionsDialog od = new OptionsDialog(toroidalUniverse, timeInt, universe.GetLength(0), universe.GetLength(1));
 
             if (DialogResult.OK == od.ShowDialog())
             {
                 if (xAxis != od.xAxis || yAxis != od.yAxis)
                 {
-                    universe = new cell[od.xAxis, od.yAxis];
-                    scratchPad = new cell[od.xAxis, od.yAxis];
+                    univX = od.xAxis;
+                    univY = od.yAxis;
+                    universe = new cell[univX, univY];
+                    scratchPad = new cell[univX, univY];
                 }
-                timer.Interval = od.interval;
+                timeInt = od.interval;
+                timer.Interval = timeInt;
                 toroidalUniverse = od.toroidal;
             }
             graphicsPanel1.Invalidate();
@@ -567,10 +658,63 @@ namespace GameOfLife_AlexKing
                         // it is a row of cells and needs to be iterated through.
                         for (int xPos = 0; xPos < row.Length; xPos++)
                         {
-                            // If row[xPos] is a 'O' (capital O) then
-                            // set the corresponding cell in the universe to alive.
-                            // If row[xPos] is a '.' (period) then
-                            // set the corresponding cell in the universe to dead.
+                            // If row[xPos] is a 'O' (capital O) then cell == alive
+                            // If row[xPos] is a '.' (period) then cell == dead
+                            if (row[xPos] == 'O')
+                            {
+                                universe[xPos, y].isOn = true;
+                            }
+                            else if (row[xPos] == '.')
+                            {
+                                universe[xPos, y].isOn = false;
+                            }
+                        }
+                        y++;
+                    }
+                }
+                // Close the file.
+                reader.Close();
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void importToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "All Files|*.*|Cells|*.cells";
+            dlg.FilterIndex = 2;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                StreamReader reader = new StreamReader(dlg.FileName);
+
+                // Create a couple variables to calculate the width and height
+                // of the data in the file.
+                int y = 0;
+
+                // Reset the file pointer back to the beginning of the file.
+                reader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                // Iterate through the file again, this time reading in the cells.
+                while (y < universe.GetLength(1))
+                {
+                    // Read one row at a time.
+                    string row = reader.ReadLine();
+
+                    // If the row begins with '!' then
+                    // it is a comment and should be ignored.
+                    if (row[0] == '!')
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        // If the row is not a comment then 
+                        // it is a row of cells and needs to be iterated through.
+                        for (int xPos = 0; xPos < universe.GetLength(0); xPos++)
+                        {
+                            // If row[xPos] is a 'O' (capital O) then cell == alive
+                            // If row[xPos] is a '.' (period) then cell == dead
                             if (row[xPos] == 'O')
                             {
                                 universe[xPos, y].isOn = true;
@@ -603,7 +747,6 @@ namespace GameOfLife_AlexKing
                 // Write any comments you want to include first.
                 // Prefix all comment strings with an exclamation point.
                 // Use WriteLine to write the strings to the file. 
-                // It appends a CRLF for you.
                 writer.WriteLine("!This is my comment.");
 
                 // Iterate through the universe one row at a time.
@@ -616,9 +759,7 @@ namespace GameOfLife_AlexKing
                     for (int x = 0; x < universe.GetLength(0); x++)
                     {
                         // If the universe[x,y] is alive then append 'O' (capital O)
-                        // to the row string.
                         // Else if the universe[x,y] is dead then append '.' (period)
-                        // to the row string.
                         if (universe[x, y].isOn == true)
                         {
                             currentRow += 'O';
@@ -637,6 +778,20 @@ namespace GameOfLife_AlexKing
                 writer.Close();
             }
             graphicsPanel1.Invalidate();
+        }
+
+        //Closing function, updates all settings
+        private void GOLForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Properties.Settings.Default.timerInterval = timeInt;
+            Properties.Settings.Default.seed = seed;
+            Properties.Settings.Default.gridColor = gridColor;
+            Properties.Settings.Default.tenGridColor = tenGridColor;
+            Properties.Settings.Default.cellColor = cellColor;
+            Properties.Settings.Default.backgroundColor = backgroundColor;
+            Properties.Settings.Default.universeX = univX;
+            Properties.Settings.Default.universeY = univY;
+            Properties.Settings.Default.Save();
         }
     }
 }
